@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.frontend.name }}
+  labels:
+    app: {{ .Release.Name }}-{{ .Values.frontend.name }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.frontend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.frontend.name }}
+    spec:
+      containers:
+        - name: {{ .Values.frontend.name }}
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}
+          env:
+            - name: PORT
+              value: "{{ .Values.frontend.service.port }}"
+            - name: REACT_APP_API_URL
+              value: {{ .Values.frontend.env.REACT_APP_API_URL }}
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}

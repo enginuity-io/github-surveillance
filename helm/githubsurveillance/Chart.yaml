@@ -1,0 +1,13 @@
+apiVersion: v2
+name: githubsurveillance
+description: A Helm chart for GitHub Organization Surveillance application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - github
+  - monitoring
+  - organization
+maintainers:
+  - name: amvirdev
+    email: amit.vmath@gmail.com
