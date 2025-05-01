@@ -1,0 +1,29 @@
+backend:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  ingress:
+    enabled: true
+    className: nginx
+    host: api.githubsurveillance.basic-eks.local
+
+frontend:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  env:
+    REACT_APP_API_URL: "http://api.githubsurveillance.basic-eks.local"
+  ingress:
+    enabled: true
+    className: nginx
+    host: githubsurveillance.basic-eks.local
