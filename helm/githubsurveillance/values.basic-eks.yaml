@@ -1,12 +1,17 @@
 backend:
+  imagePullSecrets:
+    - name: github-registry-secret
+  image:
+    repository: ghcr.io/amvirdev/github-surveillance-backend
+    pullPolicy: Always
   replicaCount: 1
   resources:
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
     requests:
       cpu: 200m
-      memory: 256Mi
+      memory: 512Mi
   ingress:
     enabled: true
     className: alb
@@ -17,6 +22,11 @@ backend:
     host: api.githubsurveillance.basic-eks.local
 
 frontend:
+  imagePullSecrets:
+    - name: github-registry-secret
+  image:
+    repository: ghcr.io/amvirdev/github-surveillance-frontend
+    pullPolicy: Always
   replicaCount: 1
   resources:
     limits:

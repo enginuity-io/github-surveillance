@@ -1,0 +1,30 @@
+name: Make Packages Public
+
+on:
+  workflow_dispatch:
+
+jobs:
+  make-public:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make frontend package public
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.request('PATCH /orgs/{org}/packages/container/{package_name}/visibility', {
+              org: 'amvirdev',
+              package_name: 'github-surveillance-frontend',
+              visibility: 'public'
+            });
+
+      - name: Make backend package public
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.request('PATCH /orgs/{org}/packages/container/{package_name}/visibility', {
+              org: 'amvirdev',
+              package_name: 'github-surveillance-backend',
+              visibility: 'public'
+            });
