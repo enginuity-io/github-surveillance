@@ -1,0 +1,95 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE_NAME: ${{ github.repository }}-backend
+  FRONTEND_IMAGE_NAME: ${{ github.repository }}-frontend
+  KUBERNETES_NAMESPACE: github-surveillance
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Backend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+
+      - name: Build and push Frontend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+
+      - name: Set up kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+        
+      - name: Create namespace if not exists
+        run: |
+          kubectl create namespace ${{ env.KUBERNETES_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create GitHub token secret
+        run: |
+          kubectl create secret generic github-token \
+            --from-literal=token=${{ secrets.GITHUB_TOKEN }} \
+            -n ${{ env.KUBERNETES_NAMESPACE }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy Helm chart
+        run: |
+          helm upgrade --install github-surveillance ./helm/githubsurveillance \
+            --namespace ${{ env.KUBERNETES_NAMESPACE }} \
+            --set backend.image.repository=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }} \
+            --set backend.image.tag=${{ github.sha }} \
+            --set frontend.image.repository=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }} \
+            --set frontend.image.tag=${{ github.sha }} \
+            --set backend.env.GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            --set backend.env.GITHUB_ORG=amvirdev \
+            --wait
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n ${{ env.KUBERNETES_NAMESPACE }}
+          echo "Waiting for pods to be ready..."
+          kubectl wait --for=condition=ready pod -l app=github-surveillance-backend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
+          kubectl wait --for=condition=ready pod -l app=github-surveillance-frontend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
