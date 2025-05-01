@@ -1,0 +1,43 @@
+backend:
+  replicaCount: 3
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  ingress:
+    enabled: true
+    className: nginx
+    host: api.githubsurveillance.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/tls-acme: "true"
+    tls:
+      - secretName: githubsurveillance-tls
+        hosts:
+          - api.githubsurveillance.com
+
+frontend:
+  replicaCount: 3
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  env:
+    REACT_APP_API_URL: "https://api.githubsurveillance.com"
+  ingress:
+    enabled: true
+    className: nginx
+    host: githubsurveillance.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/tls-acme: "true"
+    tls:
+      - secretName: githubsurveillance-frontend-tls
+        hosts:
+          - githubsurveillance.com
