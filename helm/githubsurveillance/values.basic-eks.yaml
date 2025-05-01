@@ -9,7 +9,11 @@ backend:
       memory: 256Mi
   ingress:
     enabled: true
-    className: nginx
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     host: api.githubsurveillance.basic-eks.local
 
 frontend:
@@ -25,5 +29,9 @@ frontend:
     REACT_APP_API_URL: "http://api.githubsurveillance.basic-eks.local"
   ingress:
     enabled: true
-    className: nginx
+    className: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     host: githubsurveillance.basic-eks.local
