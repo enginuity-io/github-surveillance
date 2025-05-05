@@ -2,9 +2,75 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: github-surveillance
+  description: A Node.js and React application for GitHub surveillance
   annotations:
     github.com/project-slug: amvirdev/github-surveillance
+    github.com/workflows: main.yml
+    backstage.io/kubernetes-label-selector: app=github-surveillance
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - nodejs
+    - react
+    - web
 spec:
-  type: other
-  lifecycle: unknown
-  owner: amvirdev
+  type: service
+  lifecycle: production
+  owner: user:default/amvirdev
+  system: github-surveillance-system
+  dependsOn:
+    - api:github-surveillance-api
+    - resource:basic-eks-cluster
+  providesApis:
+    - github-surveillance-api
+
+---
+# API: The REST API provided or consumed by the app
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: github-surveillance-api
+  description: REST API for the GitHub Surveillance application
+  tags:
+    - rest
+    - github
+spec:
+  type: openapi
+  lifecycle: production
+  owner: user:default/amvirdev
+  system: github-surveillance-system
+  definition:
+    $text: ./openapi.yaml # Reference to OpenAPI spec (create this file if needed)
+
+---
+# Resource: The EKS Kubernetes cluster
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: basic-eks-cluster
+  description: Amazon EKS cluster hosting the GitHub Surveillance application
+  annotations:
+    backstage.io/kubernetes-cluster: basic-eks-cluster
+    aws.amazon.com/eks-cluster: basic-eks-cluster
+  tags:
+    - kubernetes
+    - eks
+    - aws
+spec:
+  type: kubernetes-cluster
+  lifecycle: production
+  owner: user:default/amvirdev
+  system: github-surveillance-system
+  dependsOn:
+    - component:github-surveillance
+
+---
+# System: Logical grouping of the app, API, and cluster
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: github-surveillance-system
+  description: System encompassing the GitHub Surveillance application and its infrastructure
+spec:
+  owner: user:default/amvirdev
+  domain: platform-engineering
+```
