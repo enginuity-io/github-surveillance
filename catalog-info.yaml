@@ -46,7 +46,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: basic-eks-cluster
+  name: basic-eks
   description: Amazon EKS cluster hosting the GitHub Surveillance application
   annotations:
     backstage.io/kubernetes-cluster: basic-eks-cluster
