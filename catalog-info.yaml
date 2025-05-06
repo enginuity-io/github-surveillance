@@ -4,7 +4,7 @@ metadata:
   name: github-surveillance
   description: A Node.js and React application for GitHub surveillance
   backstage.io/kubernetes-id:basic-eks
-  backstage.io/kubernetes-namespace: github-surveillance 
+  backstage.io/kubernetes-namespace: github-surveillance
   annotations:
     github.com/project-slug: amvirdev/github-surveillance
     github.com/workflows: main.yml
