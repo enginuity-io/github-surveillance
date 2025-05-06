@@ -41,7 +41,7 @@ spec:
   owner: user:default/amvirdev
   system: github-surveillance
   definition:
-    $text: ./openapi.yaml # Reference to OpenAPI spec (create this file if needed)
+    $text: ./contents/openapi.yaml # Reference to OpenAPI spec (create this file if needed)
 
 ---
 # Resource: The EKS Kubernetes cluster
