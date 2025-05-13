@@ -32,6 +32,11 @@ kind: API
 metadata:
   name: github-surveillance-backend
   description: REST API for the GitHub Surveillance application
+  annotations:
+    github.com/project-slug: amvirdev/github-surveillance
+    github.com/workflows: main.yml
+    backstage.io/kubernetes-label-selector: app=github-surveillance-backend
+    backstage.io/techdocs-ref: dir:.
   tags:
     - rest
     - github
