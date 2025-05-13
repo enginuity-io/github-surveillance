@@ -8,7 +8,7 @@ metadata:
   annotations:
     github.com/project-slug: amvirdev/github-surveillance
     github.com/workflows: main.yml
-    backstage.io/kubernetes-label-selector: app=github-surveillance
+    backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
     backstage.io/techdocs-ref: dir:.
   tags:
     - nodejs
