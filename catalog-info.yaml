@@ -6,7 +6,7 @@ metadata:
   backstage.io/kubernetes-id: basic-eks
   backstage.io/kubernetes-namespace: github-surveillance
   annotations:
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: amit.vmath@gmail.com/github-surveillance
     github.com/workflows: main.yml
     backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
     backstage.io/techdocs-ref: dir:.
@@ -17,7 +17,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: user:default/amit.vmath@gmail.com
   system: github-surveillance
   dependsOn:
     - api:github-surveillance-backend
@@ -33,7 +33,7 @@ metadata:
   name: github-surveillance-backend
   description: REST API for the GitHub Surveillance application
   annotations:
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: amit.vmath@gmail.com/github-surveillance
     github.com/workflows: main.yml
     backstage.io/kubernetes-label-selector: app=github-surveillance-backend
     backstage.io/techdocs-ref: dir:.
@@ -43,7 +43,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: user:default/amit.vmath@gmail.com
   system: github-surveillance
   definition:
     $text: ./contents/openapi.yaml # Reference to OpenAPI spec (create this file if needed)
@@ -65,7 +65,7 @@ metadata:
 spec:
   type: kubernetes-cluster
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: user:default/amit.vmath@gmail.com
   system: github-surveillance
   dependsOn:
     - component:github-surveillance
@@ -78,5 +78,5 @@ metadata:
   name: github-surveillance
   description: System encompassing the GitHub Surveillance application and its infrastructure
 spec:
-  owner: user:default/amvirdev
+  owner: user:default/amit.vmath@gmail.com
   domain: platform-engineering
