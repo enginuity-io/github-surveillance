@@ -17,7 +17,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: amvirdev
   system: github-surveillance
   dependsOn:
     - api:github-surveillance-backend
@@ -43,7 +43,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: amvirdev
   system: github-surveillance
   definition:
     $text: ./contents/openapi.yaml # Reference to OpenAPI spec (create this file if needed)
@@ -65,7 +65,7 @@ metadata:
 spec:
   type: kubernetes-cluster
   lifecycle: production
-  owner: user:default/amvirdev
+  owner: amvirdev
   system: github-surveillance
   dependsOn:
     - component:github-surveillance
@@ -78,5 +78,5 @@ metadata:
   name: github-surveillance
   description: System encompassing the GitHub Surveillance application and its infrastructure
 spec:
-  owner: user:default/amvirdev
+  owner: amvirdev
   domain: platform-engineering
