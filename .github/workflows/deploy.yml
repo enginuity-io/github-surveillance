@@ -101,3 +101,19 @@ jobs:
           echo "Waiting for pods to be ready..."
           kubectl wait --for=condition=ready pod -l app=github-surveillance-backend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
           kubectl wait --for=condition=ready pod -l app=github-surveillance-frontend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
+# Add this after your deployment steps
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: "success"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+      #Added for apache-devlake
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: "failure"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
