@@ -30,7 +30,15 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+          
+      # Added for apache-devlakes DORA metric. Not required for CICD 
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production  # or staging, dev, etc.
+          description: "Deployment from GitHub Actions"
+          
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v4
         with:
