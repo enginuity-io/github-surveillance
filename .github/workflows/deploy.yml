@@ -101,19 +101,49 @@ jobs:
           echo "Waiting for pods to be ready..."
           kubectl wait --for=condition=ready pod -l app=github-surveillance-backend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
           kubectl wait --for=condition=ready pod -l app=github-surveillance-frontend -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=180s
-# Add this after your deployment steps
-      - name: Update deployment status (success)
+
+      # Send deployment data to Apache DevLake for DORA metrics
+      - name: Send deployment data to Apache DevLake
         if: success()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          state: "success"
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-      #Added for apache-devlake
-      - name: Update deployment status (failure)
+        run: |
+          curl https://204f-2601-147-4c00-1c0-b405-dc37-292-5351.ngrok-free.app/api/rest/plugins/webhook/connections/2/deployments -X 'POST' \
+          -H 'Authorization: Bearer VH8L2h3Jkjdu1rap2TRR4PqKNSRprlqczD477aM5S9gVdbjBquW3uqpVIojK1dfNyhvftyZkExJ1z4fpFs6gmLQnYgTAFkAIYvolI0OkBxwbFfeqxHMEiGGIx12mGIlZ' \
+          -d '{
+            "id": "github-surveillance-deployment-${{ github.run_id }}",
+            "startedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+            "finishedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+            "result": "SUCCESS",
+            "deploymentCommits":[
+              {
+                "repoUrl": "https://github.com/${{ github.repository }}",
+                "refName": "${{ github.ref_name }}",
+                "startedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+                "finishedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+                "commitSha": "${{ github.sha }}",
+                "commitMsg": "${{ github.event.head_commit.message }}"
+              }
+            ]
+          }'
+          
+      # Send deployment failure data to Apache DevLake for DORA metrics
+      - name: Send deployment failure data to Apache DevLake
         if: failure()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          state: "failure"
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+        run: |
+          curl https://204f-2601-147-4c00-1c0-b405-dc37-292-5351.ngrok-free.app/api/rest/plugins/webhook/connections/2/deployments -X 'POST' \
+          -H 'Authorization: Bearer VH8L2h3Jkjdu1rap2TRR4PqKNSRprlqczD477aM5S9gVdbjBquW3uqpVIojK1dfNyhvftyZkExJ1z4fpFs6gmLQnYgTAFkAIYvolI0OkBxwbFfeqxHMEiGGIx12mGIlZ' \
+          -d '{
+            "id": "github-surveillance-deployment-${{ github.run_id }}",
+            "startedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+            "finishedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+            "result": "FAILURE",
+            "deploymentCommits":[
+              {
+                "repoUrl": "https://github.com/${{ github.repository }}",
+                "refName": "${{ github.ref_name }}",
+                "startedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+                "finishedDate": "'$(date -u +"%Y-%m-%dT%H:%M:%S%z" | sed "s/\([0-9]\{2\}\)$/:\1/")'",
+                "commitSha": "${{ github.sha }}",
+                "commitMsg": "${{ github.event.head_commit.message }}"
+              }
+            ]
+          }'
