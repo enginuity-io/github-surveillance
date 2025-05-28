@@ -77,14 +77,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        id: meta
+      - name: Extract Backend Docker metadata
+        id: meta-backend
         uses: docker/metadata-action@v4
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
-          path: repo
+          images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha
+            
+      - name: Extract Frontend Docker metadata
+        id: meta-frontend
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -95,19 +103,21 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./repo/backend
+          file: ./repo/backend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,scope=backend,mode=max
 
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./repo/frontend
+          file: ./repo/frontend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
 
   deploy-staging:
     needs: build-and-push
