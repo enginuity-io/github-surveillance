@@ -1,0 +1,66 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: github-surveillance-frontend
+  description: React frontend for GitHub surveillance application
+  annotations:
+    backstage.io/kubernetes-id: basic-eks
+    backstage.io/kubernetes-namespace: github-surveillance
+    backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
+    github.com/project-slug: amvirdev/github-surveillance
+    backstage.io/techdocs-ref: dir:.
+    docker.io/image: amvirdev/github-surveillance-frontend:v1.0.1
+    backstage.io/managed-by-location: url:https://github.com/amvirdev/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/amvirdev/github-surveillance
+  tags:
+    - react
+    - web
+    - javascript
+    - frontend
+spec:
+  type: website
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  providesApis:
+    - github-surveillance-web-api
+  dependsOn:
+    - component:github-surveillance-backend
+    - api:github-surveillance-api
+    - resource:basic-eks
+    - component:nodegroup-ng-1
+    - component:nodegroup-managed-ng
+    - component:nodegroup-basic-nodegroup
+
+---
+# API: Web Frontend API Definition
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: github-surveillance-web-api
+  description: Web Frontend for Github Surveillance
+  tags:
+    - web
+    - frontend
+spec:
+  type: web
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  definition: |
+    Web interface for Github Surveillance application
+
+---
+# Domain: The business domain this system belongs to
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: monitoring
+  description: Monitoring and Observability Domain
+  annotations:
+    backstage.io/techdocs-ref: dir:./docs
+  tags:
+    - monitoring
+    - observability
+spec:
+  owner: platform-engineering

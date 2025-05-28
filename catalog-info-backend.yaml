@@ -1,0 +1,85 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: github-surveillance-backend
+  description: Node.js backend service for GitHub surveillance application
+  annotations:
+    backstage.io/kubernetes-id: basic-eks
+    backstage.io/kubernetes-namespace: github-surveillance
+    backstage.io/kubernetes-label-selector: app=github-surveillance-backend
+    github.com/project-slug: amvirdev/github-surveillance
+    github.com/workflows: deploy.yml
+    backstage.io/techdocs-ref: dir:.
+    docker.io/image: amvirdev/github-surveillance-backend:v1.0.0
+    backstage.io/managed-by-location: url:https://github.com/amvirdev/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/amvirdev/github-surveillance
+  tags:
+    - nodejs
+    - express
+    - backend
+    - api
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  providesApis:
+    - github-surveillance-api
+  consumesApis:
+    - github-api
+  dependsOn:
+    - resource:basic-eks
+    - component:nodegroup-ng-1
+    - component:nodegroup-managed-ng
+    - component:nodegroup-basic-nodegroup
+
+---
+# API: The REST API provided by the backend
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: github-surveillance-api
+  description: REST API for the GitHub Surveillance application
+  annotations:
+    github.com/project-slug: amvirdev/github-surveillance
+    backstage.io/kubernetes-label-selector: app=github-surveillance-backend
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - rest
+    - github
+    - openapi
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: Github Surveillance API
+      version: 1.0.0
+      description: API for monitoring Github activities
+    paths:
+      /api/repos:
+        get:
+          summary: List repositories
+          responses:
+            '200':
+              description: List of repositories
+
+---
+# System: Logical grouping of the app components
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: github-surveillance
+  description: System encompassing the GitHub Surveillance application and its infrastructure
+  annotations:
+    github.com/project-slug: amvirdev/github-surveillance
+  tags:
+    - devops
+    - github
+    - monitoring
+spec:
+  owner: platform-engineering
+  domain: monitoring
