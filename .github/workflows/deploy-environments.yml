@@ -106,8 +106,7 @@ jobs:
           file: ./repo/backend/Dockerfile
           push: true
           tags: ${{ steps.meta-backend.outputs.tags }}
-          cache-from: type=gha,scope=backend
-          cache-to: type=gha,scope=backend,mode=max
+          no-cache: true
 
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v4
@@ -116,8 +115,7 @@ jobs:
           file: ./repo/frontend/Dockerfile
           push: true
           tags: ${{ steps.meta-frontend.outputs.tags }}
-          cache-from: type=gha,scope=frontend
-          cache-to: type=gha,scope=frontend,mode=max
+          no-cache: true
 
   deploy-staging:
     needs: build-and-push
