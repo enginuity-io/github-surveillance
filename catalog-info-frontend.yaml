@@ -7,11 +7,12 @@ metadata:
     backstage.io/kubernetes-id: basic-eks
     backstage.io/kubernetes-namespace: github-surveillance
     backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: enginuity-io/github-surveillance
     backstage.io/techdocs-ref: dir:.
-    docker.io/image: amvirdev/github-surveillance-frontend:v1.0.1
-    backstage.io/managed-by-location: url:https://github.com/amvirdev/github-surveillance
-    backstage.io/managed-by-origin-location: url:https://github.com/amvirdev/github-surveillance
+    docker.io/image: enginuity-io/github-surveillance-frontend:v1.0.1
+    backstage.io/managed-by-location: url:https://github.com/enginuity-io/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/enginuity-io/github-surveillance
+    github.com/security-insights: 'enabled'
   tags:
     - react
     - web
@@ -31,6 +32,7 @@ spec:
     - component:nodegroup-ng-1
     - component:nodegroup-managed-ng
     - component:nodegroup-basic-nodegroup
+    - resource:github-surveillance-namespace
 
 ---
 # API: Web Frontend API Definition

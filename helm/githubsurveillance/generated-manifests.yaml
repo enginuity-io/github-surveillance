@@ -1,0 +1,162 @@
+---
+# Source: githubsurveillance/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: release-name-secrets
+type: Opaque
+data:
+  github-token:
+---
+# Source: githubsurveillance/templates/backend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-backend
+  labels:
+    app: release-name-backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3001
+      targetPort: 3001
+      protocol: TCP
+      name: http
+  selector:
+    app: release-name-backend
+---
+# Source: githubsurveillance/templates/frontend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-frontend
+  labels:
+    app: release-name-frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3002
+      targetPort: 3002
+      protocol: TCP
+      name: http
+  selector:
+    app: release-name-frontend
+---
+# Source: githubsurveillance/templates/backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-backend
+  labels:
+    app: release-name-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: release-name-backend
+  template:
+    metadata:
+      labels:
+        app: release-name-backend
+    spec:
+      containers:
+        - name: backend
+          image: "githubsurveillance-backend:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+          env:
+            - name: PORT
+              value: "3001"
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-secrets
+                  key: github-token
+            - name: GITHUB_ORG
+              value: amvirdev
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+---
+# Source: githubsurveillance/templates/frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-frontend
+  labels:
+    app: release-name-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: release-name-frontend
+  template:
+    metadata:
+      labels:
+        app: release-name-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "githubsurveillance-frontend:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PORT
+              value: "3002"
+            - name: REACT_APP_API_URL
+              value: http://api.githubsurveillance.local
+          resources:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+---
+# Source: githubsurveillance/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: release-name-backend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.githubsurveillance.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: release-name-backend
+                port:
+                  number: 3001
+---
+# Source: githubsurveillance/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: release-name-frontend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: githubsurveillance.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: release-name-frontend
+                port:
+                  number: 3002

@@ -42,12 +42,42 @@ aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $REGION
 ### 3. Install Required Tools
 
 ```bash
-# Install NGINX Ingress Controller
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx
+# Install AWS Load Balancer Controller
+export CLUSTER_NAME="your-cluster-name"
+export AWS_REGION="your-aws-region"
 
-# Install cert-manager for SSL
+# Create IAM OIDC provider
+eksctl utils associate-iam-oidc-provider \
+    --region ${AWS_REGION} \
+    --cluster ${CLUSTER_NAME} \
+    --approve
+
+# Create IAM policy
+curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
+
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+
+# Create service account
+eksctl create iamserviceaccount \
+  --cluster=${CLUSTER_NAME} \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --attach-policy-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+
+# Install AWS Load Balancer Controller
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=${CLUSTER_NAME} \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+
+# Install cert-manager for SSL (optional)
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager \
@@ -198,13 +228,20 @@ kubectl logs -l app=github-surveillance-frontend -n github-surveillance-staging
    - Verify github-registry-secret exists in the namespace
    - Check GitHub token permissions
 
-2. Ingress Issues
-   - Verify NGINX Ingress Controller is running
-   - Check DNS records point to the correct LoadBalancer
+2. ALB Ingress Issues
+   - Check ALB controller logs: `kubectl logs -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controller`
+   - Verify IAM roles and policies are correctly configured
+   - Check if target groups are created in AWS console
+   - Ensure security groups allow traffic to target groups
 
 3. Certificate Issues
-   - Verify cert-manager pods are running
+   - Verify cert-manager pods are running (if using SSL)
    - Check certificate status: `kubectl get certificates -A`
+
+4. Application Access Issues
+   - Wait for ALB provisioning to complete (can take 3-5 minutes)
+   - Check if target groups are healthy in AWS console
+   - Verify the security group rules allow traffic on ports 3001 and 3002
 
 ## Cleanup
 

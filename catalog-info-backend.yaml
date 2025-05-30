@@ -7,12 +7,13 @@ metadata:
     backstage.io/kubernetes-id: basic-eks
     backstage.io/kubernetes-namespace: github-surveillance
     backstage.io/kubernetes-label-selector: app=github-surveillance-backend
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: enginuity-io/github-surveillance
     github.com/workflows: deploy.yml
     backstage.io/techdocs-ref: dir:.
-    docker.io/image: amvirdev/github-surveillance-backend:v1.0.0
-    backstage.io/managed-by-location: url:https://github.com/amvirdev/github-surveillance
-    backstage.io/managed-by-origin-location: url:https://github.com/amvirdev/github-surveillance
+    docker.io/image: enginuity-io/github-surveillance-backend:v1.0.0
+    backstage.io/managed-by-location: url:https://github.com/enginuity-io/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/enginuity-io/github-surveillance
+    github.com/security-insights: 'enabled'
   tags:
     - nodejs
     - express
@@ -28,6 +29,7 @@ spec:
   consumesApis:
     - github-api
   dependsOn:
+    - resource:github-surveillance-namespace
     - resource:basic-eks
     - component:nodegroup-ng-1
     - component:nodegroup-managed-ng
@@ -41,7 +43,7 @@ metadata:
   name: github-surveillance-api
   description: REST API for the GitHub Surveillance application
   annotations:
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: enginuity-io/github-surveillance
     backstage.io/kubernetes-label-selector: app=github-surveillance-backend
     backstage.io/techdocs-ref: dir:.
   tags:
@@ -75,7 +77,7 @@ metadata:
   name: github-surveillance
   description: System encompassing the GitHub Surveillance application and its infrastructure
   annotations:
-    github.com/project-slug: amvirdev/github-surveillance
+    github.com/project-slug: enginuity-io/github-surveillance
   tags:
     - devops
     - github

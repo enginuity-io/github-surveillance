@@ -2,7 +2,7 @@ backend:
   imagePullSecrets:
     - name: github-registry-secret
   image:
-    repository: ghcr.io/amvirdev/github-surveillance-backend
+    repository: amvirdev/github-surveillance-backend
     pullPolicy: Always
   replicaCount: 1
   resources:
@@ -18,14 +18,29 @@ backend:
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.type=lb_cookie
+      alb.ingress.kubernetes.io/target-group-port: '3001'
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    host: api.githubsurveillance.basic-eks.local
+      alb.ingress.kubernetes.io/healthcheck-port: '3001'
+      alb.ingress.kubernetes.io/healthcheck-path: /
+      alb.ingress.kubernetes.io/backend-protocol: HTTP
+      alb.ingress.kubernetes.io/target-group-port: '3001'
+    rules:
+      - http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: github-surveillance-backend
+                  port:
+                    number: 3001
 
 frontend:
   imagePullSecrets:
     - name: github-registry-secret
   image:
-    repository: ghcr.io/amvirdev/github-surveillance-frontend
+    repository: amvirdev/github-surveillance-frontend
     pullPolicy: Always
   replicaCount: 1
   resources:
@@ -43,5 +58,20 @@ frontend:
     annotations:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.type=lb_cookie
+      alb.ingress.kubernetes.io/target-group-port: '3002'
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    host: githubsurveillance.basic-eks.local
+      alb.ingress.kubernetes.io/healthcheck-port: '3002'
+      alb.ingress.kubernetes.io/healthcheck-path: /
+      alb.ingress.kubernetes.io/backend-protocol: HTTP
+      alb.ingress.kubernetes.io/target-group-port: '3002'
+    rules:
+      - http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: github-surveillance-frontend
+                  port:
+                    number: 3002

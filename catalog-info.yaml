@@ -1,82 +1,32 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: Location
 metadata:
-  name: github-surveillance
-  description: A Node.js and React application for GitHub surveillance
-  backstage.io/kubernetes-id: basic-eks
-  backstage.io/kubernetes-namespace: github-surveillance
+  name: github-surveillance-components
+  description: Collection of all GitHub Surveillance components
   annotations:
-    github.com/project-slug: amvirdev/github-surveillance
-    github.com/workflows: main.yml
-    backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
-    backstage.io/techdocs-ref: dir:.
-  tags:
-    - nodejs
-    - react
-    - web
+    github.com/project-slug: enginuity-io/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/enginuity-io/github-surveillance
 spec:
-  type: service
-  lifecycle: production
-  owner: amvirdev
-  system: github-surveillance
-  dependsOn:
-    - api:github-surveillance-backend
-    - resource:basic-eks
-  providesApis:
-    - github-surveillance-backend
+  targets:
+    # Frontend components
+    - ./catalog-info-frontend.yaml
+    # Backend components
+    - ./catalog-info-backend.yaml
 
 ---
-# API: The REST API provided or consumed by the app
-apiVersion: backstage.io/v1alpha1
-kind: API
-metadata:
-  name: github-surveillance-backend
-  description: REST API for the GitHub Surveillance application
-  annotations:
-    github.com/project-slug: amvirdev/github-surveillance
-    github.com/workflows: main.yml
-    backstage.io/kubernetes-label-selector: app=github-surveillance-backend
-    backstage.io/techdocs-ref: dir:.
-  tags:
-    - rest
-    - github
-spec:
-  type: openapi
-  lifecycle: production
-  owner: amvirdev
-  system: github-surveillance
-  definition:
-    $text: ./contents/openapi.yaml # Reference to OpenAPI spec (create this file if needed)
-
----
-# Resource: The EKS Kubernetes cluster
-apiVersion: backstage.io/v1alpha1
-kind: Resource
-metadata:
-  name: basic-eks
-  description: Amazon EKS cluster hosting the GitHub Surveillance application
-  annotations:
-    backstage.io/kubernetes-cluster: basic-eks
-    aws.amazon.com/eks-cluster: basic-eks
-  tags:
-    - kubernetes
-    - eks
-    - aws
-spec:
-  type: kubernetes-cluster
-  lifecycle: production
-  owner: amvirdev
-  system: github-surveillance
-  dependsOn:
-    - component:github-surveillance
-
----
-# System: Logical grouping of the app, API, and cluster
+# System: Logical grouping of the app components
+# Including system definition in main catalog for better discoverability
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: github-surveillance
   description: System encompassing the GitHub Surveillance application and its infrastructure
+  annotations:
+    github.com/project-slug: enginuity-io/github-surveillance
+  tags:
+    - devops
+    - github
+    - monitoring
 spec:
-  owner: amvirdev
-  domain: platform-engineering
+  owner: platform-engineering
+  domain: monitoring
