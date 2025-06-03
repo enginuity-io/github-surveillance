@@ -1,0 +1,108 @@
+name: Uninstall GitHub Surveillance
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to uninstall from'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+      namespace:
+        description: 'Kubernetes namespace'
+        required: true
+        default: 'github-surveillance'
+        type: string
+      release_name:
+        description: 'Helm release name'
+        required: true
+        default: 'github-surveillance'
+        type: string
+      confirm_uninstall:
+        description: 'Type "CONFIRM" to proceed with uninstallation'
+        required: true
+        type: string
+
+env:
+  KUBERNETES_NAMESPACE: ${{ github.event.inputs.namespace }}
+  RELEASE_NAME: ${{ github.event.inputs.release_name }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate confirmation
+        if: github.event.inputs.confirm_uninstall != 'CONFIRM'
+        run: |
+          echo "You must type 'CONFIRM' to proceed with uninstallation"
+          exit 1
+
+  uninstall:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write # Needed for OIDC authentication with cloud providers
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+      
+      - name: Uninstall notification
+        run: |
+          echo "Starting uninstallation of GitHub Surveillance from ${{ github.event.inputs.environment }}"
+          echo "Release: ${{ env.RELEASE_NAME }}"
+          echo "Namespace: ${{ env.KUBERNETES_NAMESPACE }}"
+      
+      - name: Create GitHub deployment for tracking
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: ${{ github.event.inputs.environment }}
+          description: "Uninstallation from GitHub Actions"
+          
+      - name: Uninstall with Helm
+        run: |
+          helm uninstall ${{ env.RELEASE_NAME }} -n ${{ env.KUBERNETES_NAMESPACE }}
+          
+      - name: Verify resources are removed
+        run: |
+          echo "Checking for any remaining resources..."
+          kubectl get all -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          
+      - name: Clean up remaining resources (if any)
+        run: |
+          echo "Removing any remaining resources..."
+          kubectl delete deployment -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          kubectl delete service -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          kubectl delete ingress -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          kubectl delete secret -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          kubectl delete configmap -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          kubectl delete pvc -l app=githubsurveillance -n ${{ env.KUBERNETES_NAMESPACE }} --ignore-not-found
+          
+      - name: Update GitHub deployment status
+        uses: chrnorm/deployment-status@v2
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: ${{ job.status }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          
+      - name: Uninstallation complete
+        run: |
+          echo "Uninstallation of GitHub Surveillance from ${{ github.event.inputs.environment }} complete"
