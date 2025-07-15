@@ -34,6 +34,7 @@ jobs:
       # Added for apache-devlakes DORA metric. Not required for CICD 
       - name: Create GitHub deployment
         uses: chrnorm/deployment-action@v2
+        continue-on-error: true  # Continue workflow even if this step fails
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: production  # or staging, dev, etc.
