@@ -2,8 +2,9 @@ backend:
   imagePullSecrets:
     - name: github-registry-secret
   image:
-    repository: amvirdev/github-surveillance-backend
+    repository: ghcr.io/enginuity-io/github-surveillance-backend
     pullPolicy: Always
+    tag: latest
   replicaCount: 1
   resources:
     limits:
@@ -40,8 +41,9 @@ frontend:
   imagePullSecrets:
     - name: github-registry-secret
   image:
-    repository: amvirdev/github-surveillance-frontend
+    repository: ghcr.io/enginuity-io/github-surveillance-frontend
     pullPolicy: Always
+    tag: latest
   replicaCount: 1
   resources:
     limits:
