@@ -1,0 +1,57 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: github-surveillance-components
+  description: Collection of all GitHub Surveillance components
+  annotations:
+    github.com/project-slug: enginuity-io/github-surveillance
+    backstage.io/managed-by-origin-location: url:https://github.com/enginuity-io/github-surveillance
+spec:
+  targets:
+    # Frontend components
+    - ./catalog-info-frontend.yaml
+    # Backend components
+    - ./catalog-info-backend.yaml
+
+---
+# System: Logical grouping of the app components
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: github-surveillance
+  description: System encompassing the GitHub Surveillance application and its infrastructure
+  annotations:
+    github.com/project-slug: enginuity-io/github-surveillance
+  tags:
+    - devops
+    - github
+    - monitoring
+spec:
+  owner: platform-engineering
+  domain: monitoring
+  providesComponents:
+    - component:github-surveillance-frontend
+    - component:github-surveillance-backend
+    - component:github-surveillance-loadbalancer
+  # Shows infrastructure dependencies
+  dependsOn:
+    - resource:github-surveillance-namespace
+    - component:basic-eks  # Depends on the entire platform
+    - component:nodegroup-managed-ng  # Backend runs here
+    - component:nodegroup-ng-1  # Frontend runs here
+
+
+---
+# Domain Definition
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: monitoring
+  description: Monitoring and Observability Domain
+  annotations:
+    backstage.io/techdocs-ref: dir:./docs
+  tags:
+    - monitoring
+    - observability
+spec:
+  owner: platform-engineering

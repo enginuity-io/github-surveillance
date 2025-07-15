@@ -25,7 +25,7 @@ spec:
   owner: platform-engineering
   system: github-surveillance
   providesApis:
-    - github-surveillance-api
+    - github-surveillance-web-api
   consumesApis:
     - github-api
   dependsOn:
@@ -40,7 +40,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: github-surveillance-api
+  name: github-surveillance-web-api
   description: REST API for the GitHub Surveillance application
   annotations:
     github.com/project-slug: enginuity-io/github-surveillance

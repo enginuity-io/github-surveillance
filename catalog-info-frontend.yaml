@@ -27,7 +27,7 @@ spec:
     - github-surveillance-web-api
   dependsOn:
     - component:github-surveillance-backend
-    - api:github-surveillance-api
+    - api:github-surveillance-web-api
     - resource:basic-eks
     - component:nodegroup-ng-1
     - component:nodegroup-managed-ng
