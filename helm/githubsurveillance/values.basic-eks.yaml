@@ -8,11 +8,11 @@ backend:
   replicaCount: 1
   resources:
     limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
+      cpu: 250m
       memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   ingress:
     enabled: true
     className: alb
@@ -25,7 +25,7 @@ backend:
       alb.ingress.kubernetes.io/healthcheck-port: '3001'
       alb.ingress.kubernetes.io/healthcheck-path: /
       alb.ingress.kubernetes.io/backend-protocol: HTTP
-      alb.ingress.kubernetes.io/target-group-port: '3001'
+      alb.ingress.kubernetes.io/target-group-: '3001'
     rules:
       - http:
           paths:
@@ -47,11 +47,11 @@ frontend:
   replicaCount: 1
   resources:
     limits:
-      cpu: 300m
-      memory: 512Mi
+      cpu: 200m
+      memory: 384Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 50m
+      memory: 128Mi
   env:
     REACT_APP_API_URL: "http://api.githubsurveillance.basic-eks.local"
   ingress:
@@ -66,7 +66,6 @@ frontend:
       alb.ingress.kubernetes.io/healthcheck-port: '3002'
       alb.ingress.kubernetes.io/healthcheck-path: /
       alb.ingress.kubernetes.io/backend-protocol: HTTP
-      alb.ingress.kubernetes.io/target-group-port: '3002'
     rules:
       - http:
           paths:
