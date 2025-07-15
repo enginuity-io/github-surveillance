@@ -1,0 +1,76 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nodegroup-ng-1
+  description: EKS Nodegroup ng-1 for GitHub Surveillance frontend
+  annotations:
+    backstage.io/kubernetes-id: basic-eks
+    backstage.io/kubernetes-namespace: github-surveillance
+    backstage.io/kubernetes-label-selector: alpha.eksctl.io/nodegroup-name=ng-1
+    github.com/project-slug: enginuity-io/github-surveillance
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - aws
+    - eks
+    - nodegroup
+    - infrastructure
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  providesApis: []
+  dependsOn:
+    - resource:basic-eks
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nodegroup-managed-ng
+  description: EKS Managed Nodegroup for GitHub Surveillance backend
+  annotations:
+    backstage.io/kubernetes-id: basic-eks
+    backstage.io/kubernetes-namespace: github-surveillance
+    backstage.io/kubernetes-label-selector: alpha.eksctl.io/nodegroup-name=managed-ng
+    github.com/project-slug: enginuity-io/github-surveillance
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - aws
+    - eks
+    - nodegroup
+    - infrastructure
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  providesApis: []
+  dependsOn:
+    - resource:basic-eks
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nodegroup-basic-nodegroup
+  description: Basic EKS Nodegroup for GitHub Surveillance
+  annotations:
+    backstage.io/kubernetes-id: basic-eks
+    backstage.io/kubernetes-namespace: github-surveillance
+    backstage.io/kubernetes-label-selector: alpha.eksctl.io/nodegroup-name=basic-nodegroup
+    github.com/project-slug: enginuity-io/github-surveillance
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - aws
+    - eks
+    - nodegroup
+    - infrastructure
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform-engineering
+  system: github-surveillance
+  providesApis: []
+  dependsOn:
+    - resource:basic-eks

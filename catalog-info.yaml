@@ -12,6 +12,8 @@ spec:
     - ./catalog-info-frontend.yaml
     # Backend components
     - ./catalog-info-backend.yaml
+    # Infrastructure components
+    - ./catalog-info-nodegroups.yaml
 
 ---
 # System: Logical grouping of the app components
