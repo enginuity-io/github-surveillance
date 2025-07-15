@@ -1,0 +1,27 @@
+GitHub Surveillance Application Uninstallation
+
+The uninstallation of the GitHub Surveillance application has been initiated.
+
+Resources being removed:
+- Deployments (Frontend and Backend)
+- Services (Frontend and Backend)
+- Ingress
+- Secrets
+- ConfigMaps (if any)
+- PersistentVolumeClaims (if any)
+
+To verify that all resources have been removed, run:
+
+  kubectl get all -l app=githubsurveillance -n {{ .Release.Namespace }}
+
+If you find any resources still present, you can manually remove them with:
+
+  kubectl delete deployment -l app=githubsurveillance -n {{ .Release.Namespace }}
+  kubectl delete service -l app=githubsurveillance -n {{ .Release.Namespace }}
+  kubectl delete ingress -l app=githubsurveillance -n {{ .Release.Namespace }}
+  kubectl delete secret -l app=githubsurveillance -n {{ .Release.Namespace }}
+
+If you're using a local development environment, don't forget to clean it up:
+
+  cd /path/to/githubsurveillance
+  docker-compose down --volumes --remove-orphans

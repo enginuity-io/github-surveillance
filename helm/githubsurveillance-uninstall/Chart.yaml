@@ -1,0 +1,14 @@
+apiVersion: v2
+name: githubsurveillance-uninstall
+description: Chart to uninstall GitHub Organization Surveillance application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - github
+  - monitoring
+  - organization
+  - uninstall
+maintainers:
+  - name: amvirdev
+    email: amit.vmath@gmail.com

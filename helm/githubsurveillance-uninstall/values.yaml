@@ -1,0 +1,20 @@
+# Default values for githubsurveillance-uninstall
+
+# The release name of the GitHub Surveillance application to uninstall
+releaseName: "githubsurveillance"
+
+# Namespace where the application is deployed
+namespace: "default"
+
+# Labels used by the application for resource selection
+appLabels:
+  app: "githubsurveillance"
+
+# Resource types to remove
+resources:
+  - deployments
+  - services
+  - ingress
+  - secrets
+  - configmaps
+  - persistentvolumeclaims

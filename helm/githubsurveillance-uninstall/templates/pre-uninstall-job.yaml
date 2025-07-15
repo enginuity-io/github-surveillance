@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-cleanup"
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-cleanup"
+      labels:
+        app: "{{ .Release.Name }}-cleanup"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: pre-uninstall-job
+        image: bitnami/kubectl:latest
+        command:
+          - /bin/sh
+          - -c
+          - |
+            echo "Starting cleanup of GitHub Surveillance resources..."
+            
+            # Get the release name from values
+            RELEASE="{{ .Values.releaseName }}"
+            NAMESPACE="{{ .Release.Namespace }}"
+            
+            # Cleanup deployments
+            echo "Removing deployments..."
+            kubectl delete deployment -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            # Cleanup services
+            echo "Removing services..."
+            kubectl delete service -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            # Cleanup ingress
+            echo "Removing ingress..."
+            kubectl delete ingress -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            # Cleanup secrets
+            echo "Removing secrets..."
+            kubectl delete secret -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            # Cleanup configmaps if any
+            echo "Removing configmaps..."
+            kubectl delete configmap -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            # Cleanup persistent volume claims if any
+            echo "Removing persistent volume claims..."
+            kubectl delete pvc -l app=githubsurveillance -n $NAMESPACE --ignore-not-found=true
+            
+            echo "Cleanup completed successfully."
+      serviceAccountName: default
