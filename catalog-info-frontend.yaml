@@ -51,18 +51,3 @@ spec:
   system: github-surveillance
   definition: |
     Web interface for Github Surveillance application
-
----
-# Domain: The business domain this system belongs to
-apiVersion: backstage.io/v1alpha1
-kind: Domain
-metadata:
-  name: monitoring
-  description: Monitoring and Observability Domain
-  annotations:
-    backstage.io/techdocs-ref: dir:./docs
-  tags:
-    - monitoring
-    - observability
-spec:
-  owner: platform-engineering
