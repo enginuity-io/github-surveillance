@@ -51,25 +51,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
           no-cache: true
 
-      - name: Check if frontend directory exists
-        id: check_frontend
-        run: |
-          if [ -d "./frontend" ]; then
-            echo "Frontend directory exists"
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "Frontend directory does not exist, creating minimal structure"
-            echo "exists=false" >> $GITHUB_OUTPUT
-            mkdir -p frontend
-            cp -r ./backend/Dockerfile ./frontend/
-            # Create a minimal package.json
-            echo '{
-              "name": "github-surveillance-frontend",
-              "version": "1.0.0",
-              "private": true
-            }' > ./frontend/package.json
-          fi
-          
+
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v4
         with:
