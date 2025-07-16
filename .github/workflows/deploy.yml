@@ -92,7 +92,7 @@ jobs:
       - name: Create GitHub token secret
         run: |
           kubectl create secret generic github-surveillance-secrets \
-            --from-literal=github-token=${{ secrets.GITHUB_TOKEN }} \
+            --from-literal=github-token=${{ secrets.PAT_TOKEN }} \
             -n ${{ env.KUBERNETES_NAMESPACE }} \
             --dry-run=client -o yaml | kubectl apply -f -
 
