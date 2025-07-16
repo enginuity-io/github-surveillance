@@ -30,7 +30,7 @@ spec:
     - github-api
   dependsOn:
     - resource:github-surveillance-namespace
-    - resource:basic-eks
+    - component:basic-eks
     - component:nodegroup-ng-1
     - component:nodegroup-managed-ng
     - component:nodegroup-basic-nodegroup

@@ -28,7 +28,7 @@ spec:
   dependsOn:
     - component:github-surveillance-backend
     - api:github-surveillance-web-api
-    - resource:basic-eks
+    - component:basic-eks
     - component:nodegroup-ng-1
     - component:nodegroup-managed-ng
     - component:nodegroup-basic-nodegroup
