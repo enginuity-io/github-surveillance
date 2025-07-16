@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, TextField, Typography, Box, AppBar, Toolbar, Paper, Tab, Tabs } from '@mui/material';
+import axios from 'axios';
 
 interface Repository {
   name: string;
@@ -70,17 +71,22 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // API base URL - local backend
+      const apiBaseUrl = 'http://localhost:3001';
       
-      // Use mock data instead of API calls
-      setRepos(mockRepos);
-      setAuditLogs(mockAuditLogs);
+      // Fetch repositories
+      const reposResponse = await axios.get(`${apiBaseUrl}/api/repos`);
+      setRepos(reposResponse.data || mockRepos);
+      
+      // Fetch audit logs
+      const auditLogsResponse = await axios.get(`${apiBaseUrl}/api/audit-logs`);
+      setAuditLogs(auditLogsResponse.data || mockAuditLogs);
     } catch (error: any) {
       console.error('Error fetching data:', error);
-      setError('Failed to fetch data');
-      setRepos([]);
-      setAuditLogs([]);
+      setError(`Failed to fetch data: ${error.message}`);
+      // Fallback to mock data
+      setRepos(mockRepos);
+      setAuditLogs(mockAuditLogs);
     } finally {
       setLoading(false);
     }
