@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -44,15 +46,19 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+          no-cache: true
 
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }},${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+          no-cache: true
 
   deploy:
     needs: build-and-push
