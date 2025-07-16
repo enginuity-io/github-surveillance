@@ -44,6 +44,6 @@ spec:
               service:
                 name: {{ $.Release.Name }}-frontend
                 port:
-                  number: {{ .backend.service.port.number }}
+                  number: {{ .backend.service.port.number | default 3002 }}
           {{- end }}
     {{- end }}
