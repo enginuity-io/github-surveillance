@@ -1,17 +1,21 @@
 backend:
   imagePullSecrets:
     - name: github-registry-secret
+  env:
+    # The GitHub token should be provided as a Kubernetes secret
+    # and referenced in the Helm command or through a CI/CD pipeline
+    GITHUB_ORG: "amvirdev"
   image:
-    repository: ghcr.io/amvirdev/github-surveillance-backend
+    repository: ghcr.io/enginuity-io/github-surveillance-backend
     pullPolicy: Always
     tag: latest
   replicaCount: 0
   resources:
     limits:
-      cpu: 500m
+      cpu: 300m
       memory: 1024Mi
     requests:
-      cpu: 200m
+      cpu: 100m
       memory: 512Mi
   ingress:
     enabled: true
@@ -40,9 +44,9 @@ frontend:
   imagePullSecrets:
     - name: github-registry-secret
   image:
-    repository: ghcr.io/amvirdev/github-surveillance-frontend
+    repository: ghcr.io/enginuity-io/github-surveillance-frontend
     pullPolicy: Always
-    tag: mock
+    tag: latest
   replicaCount: 1
   resources:
     limits:
