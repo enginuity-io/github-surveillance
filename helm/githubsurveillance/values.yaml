@@ -4,6 +4,8 @@ global:
 backend:
   name: backend
   replicaCount: 2
+  imagePullSecrets:
+    - name: github-registry-secret
   image:
     repository: githubsurveillance-backend
     tag: latest
@@ -29,6 +31,8 @@ backend:
 frontend:
   name: frontend
   replicaCount: 1
+  imagePullSecrets:
+    - name: github-registry-secret
   image:
     repository: githubsurveillance-frontend
     tag: latest
