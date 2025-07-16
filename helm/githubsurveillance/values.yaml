@@ -13,11 +13,11 @@ backend:
     port: 3001
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 1Gi
     requests:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 400m
+      memory: 512Mi
   env:
     GITHUB_TOKEN: ""
     GITHUB_ORG: "amvirdev"
@@ -38,11 +38,11 @@ frontend:
     port: 3002
   resources:
     limits:
-      cpu: 300m
-      memory: 512Mi
+      cpu: 600m
+      memory: 768Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 200m
+      memory: 384Mi
   env:
     REACT_APP_API_URL: "http://api.githubsurveillance.local"
   ingress:

@@ -108,7 +108,8 @@ jobs:
             --set backend.env.GITHUB_ORG=amvirdev \
             --set backend.ingress.className=alb \
             --set frontend.ingress.className=alb \
-            --wait
+            --wait \
+            --timeout 10m
 
       - name: Verify deployment
         run: |
