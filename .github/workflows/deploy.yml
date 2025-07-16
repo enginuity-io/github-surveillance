@@ -106,6 +106,8 @@ jobs:
             --set frontend.image.tag=${{ github.sha }} \
             --set backend.env.GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             --set backend.env.GITHUB_ORG=amvirdev \
+            --set backend.ingress.className=alb \
+            --set frontend.ingress.className=alb \
             --wait
 
       - name: Verify deployment

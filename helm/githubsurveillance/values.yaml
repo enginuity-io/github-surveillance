@@ -23,7 +23,7 @@ backend:
     GITHUB_ORG: "amvirdev"
   ingress:
     enabled: true
-    className: nginx
+    className: alb
     host: api.githubsurveillance.local
 
 frontend:
@@ -47,5 +47,5 @@ frontend:
     REACT_APP_API_URL: "http://api.githubsurveillance.local"
   ingress:
     enabled: true
-    className: nginx
+    className: alb
     host: githubsurveillance.local

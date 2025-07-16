@@ -24,9 +24,7 @@ backend:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.type=lb_cookie
-      alb.ingress.kubernetes.io/target-group-port: '3001'
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      alb.ingress.kubernetes.io/healthcheck-port: '3001'
       alb.ingress.kubernetes.io/healthcheck-path: /
       alb.ingress.kubernetes.io/backend-protocol: HTTP
     rules:
@@ -64,9 +62,7 @@ frontend:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.type=lb_cookie
-      alb.ingress.kubernetes.io/target-group-port: '3002'
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-      alb.ingress.kubernetes.io/healthcheck-port: '3002'
       alb.ingress.kubernetes.io/healthcheck-path: /
       alb.ingress.kubernetes.io/backend-protocol: HTTP
     rules:
