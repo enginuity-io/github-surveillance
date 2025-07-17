@@ -6,7 +6,7 @@ metadata:
   annotations:
     backstage.io/kubernetes-id: basic-eks
     backstage.io/kubernetes-namespace: github-surveillance
-    backstage.io/kubernetes-label-selector: app=github-surveillance-frontend
+    backstage.io/kubernetes-label-selector: 'app=github-surveillance-frontend'
     github.com/project-slug: enginuity-io/github-surveillance
     backstage.io/techdocs-ref: dir:.
     docker.io/image: enginuity-io/github-surveillance-frontend:v1.0.1
